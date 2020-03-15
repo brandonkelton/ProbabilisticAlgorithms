@@ -1,0 +1,11 @@
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\bin\Debug\netcoreapp3.0\ProbabilisticAlgorithms.exe
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\bin\Debug\netcoreapp3.0\ProbabilisticAlgorithms.deps.json
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\bin\Debug\netcoreapp3.0\ProbabilisticAlgorithms.runtimeconfig.json
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\bin\Debug\netcoreapp3.0\ProbabilisticAlgorithms.runtimeconfig.dev.json
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\bin\Debug\netcoreapp3.0\ProbabilisticAlgorithms.dll
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\bin\Debug\netcoreapp3.0\ProbabilisticAlgorithms.pdb
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.csprojAssemblyReference.cache
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.AssemblyInfoInputs.cache
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.AssemblyInfo.cs
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.dll
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.pdb
