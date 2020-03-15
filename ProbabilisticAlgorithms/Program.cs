@@ -1,7 +1,9 @@
 ﻿using ProbabilisticAlgorithms.ComputingPi;
 using ProbabilisticAlgorithms.PrimeNumberTest;
+using ProbabilisticAlgorithms.SearchArray;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProbabilisticAlgorithms
 {
@@ -25,11 +27,15 @@ namespace ProbabilisticAlgorithms
             Console.WriteLine();
             Console.WriteLine("1) Compute Pi");
             Console.WriteLine("2) Prime Number Test");
+            Console.WriteLine("3) Random Search of Array");
             Console.WriteLine();
             Console.WriteLine();
             Console.Write("Press a number, or <Escape> to exit: ");
 
             var result = Console.ReadKey();
+
+            Console.Clear();
+
             switch (result.Key)
             {
                 case ConsoleKey.Escape:
@@ -44,6 +50,11 @@ namespace ProbabilisticAlgorithms
                 case ConsoleKey.Oem2:
                     RunPrimeTest();
                     break;
+                case ConsoleKey.D3:
+                case ConsoleKey.NumPad3:
+                case ConsoleKey.Oem3:
+                    RunSearchArray();
+                    break;
                 default:
                     break;
             }
@@ -54,8 +65,6 @@ namespace ProbabilisticAlgorithms
         static void RunPiComputer()
         {
             Console.WriteLine();
-            Console.WriteLine();
-
             Console.Write("How many Pi's would you like to generate (Non-number to exit)? ");
             var piPrompt = Console.ReadLine();
 
@@ -87,7 +96,6 @@ namespace ProbabilisticAlgorithms
 
         static void RunPrimeTest()
         {
-            Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("Input one or more numbers for which you would like to run a prime number test...");
             Console.WriteLine();
@@ -171,6 +179,47 @@ namespace ProbabilisticAlgorithms
             }
 
             return numbers.ToArray();
+        }
+
+        private static void RunSearchArray()
+        {
+            Console.WriteLine();
+
+            int searchCount = 100;
+            while (true)
+            {
+                Console.Write("How many searches should be performed (default: 100)? ");
+                var searchCountString = Console.ReadLine();
+                if (searchCountString == "") break;
+                if (int.TryParse(searchCountString, out searchCount)) break;
+                Console.WriteLine();
+                Console.WriteLine("Invalid Number!");
+            }
+
+            var results = new List<SearchResult>(searchCount);
+            var search = new Search();
+            search.BuildArray();
+
+            for (int i=0; i<searchCount; i++)
+            {
+                var searchValue = search.GetRandomValueFromArray();
+                results.Add(search.AttemptRandomSearch(searchValue));
+            }
+
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Console.WriteLine("SEARCH RESULTS");
+            Console.WriteLine("--------------------------");
+            Console.WriteLine();
+
+            Console.WriteLine($"Number of searches:\t\t{searchCount}");
+            Console.WriteLine($"Limit of guesses per search:\t{search.GuessLimit}");
+            Console.WriteLine($"Average number of comparisons: \t{results.Average(r => r.ComparisonCount)}");
+            Console.WriteLine($"Number of successful searches:\t{results.Count(r => r.IsSuccessful)}");
+            Console.WriteLine($"Number of failed searches:\t{results.Count(r => !r.IsSuccessful)}");
+
+            ReturnToMenuWait();
         }
 
         private static void ReturnToMenuWait()
