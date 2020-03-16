@@ -1,4 +1,5 @@
 ﻿using ProbabilisticAlgorithms.ComputingPi;
+using ProbabilisticAlgorithms.MonteCarloIntegration;
 using ProbabilisticAlgorithms.PrimeNumberTest;
 using ProbabilisticAlgorithms.SearchArray;
 using System;
@@ -28,6 +29,7 @@ namespace ProbabilisticAlgorithms
             Console.WriteLine("1) Compute Pi");
             Console.WriteLine("2) Prime Number Test");
             Console.WriteLine("3) Random Search of Array");
+            Console.WriteLine("4) Monte Carlo Integration");
             Console.WriteLine();
             Console.WriteLine();
             Console.Write("Press a number, or <Escape> to exit: ");
@@ -54,6 +56,11 @@ namespace ProbabilisticAlgorithms
                 case ConsoleKey.NumPad3:
                 case ConsoleKey.Oem3:
                     RunSearchArray();
+                    break;
+                case ConsoleKey.D4:
+                case ConsoleKey.NumPad4:
+                case ConsoleKey.Oem4:
+                    RunMonteCarloIntegration();
                     break;
                 default:
                     break;
@@ -218,6 +225,70 @@ namespace ProbabilisticAlgorithms
             Console.WriteLine($"Average number of comparisons: \t{results.Average(r => r.ComparisonCount)}");
             Console.WriteLine($"Number of successful searches:\t{results.Count(r => r.IsSuccessful)}");
             Console.WriteLine($"Number of failed searches:\t{results.Count(r => !r.IsSuccessful)}");
+
+            ReturnToMenuWait();
+        }
+
+        private static void RunMonteCarloIntegration()
+        {
+            Console.WriteLine();
+
+            var function = FunctionType.Sine;
+            var correctOptionSelection = false;
+            while (!correctOptionSelection)
+            {
+                Console.Write("Select function type - (S)ine, (C)osine, (T)angent? (default: Sine)? ");
+                var selection = Console.ReadKey();
+                switch (selection.Key)
+                {
+                    case ConsoleKey.S:
+                        function = FunctionType.Sine;
+                        correctOptionSelection = true;
+                        break;
+                    case ConsoleKey.C:
+                        function = FunctionType.Cosine;
+                        correctOptionSelection = true;
+                        break;
+                    case ConsoleKey.T:
+                        function = FunctionType.Tangent;
+                        correctOptionSelection = true;
+                        break;
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("Invalid Function!");
+                        break;
+                }
+            }
+
+            Console.WriteLine();
+
+            var randomPointCount = 100_000_000;
+            while (true)
+            {
+                Console.Write("How many random points should be applied? (default: 100,000,000)? ");
+                var dartThrowString = Console.ReadLine();
+                if (dartThrowString == "") break;
+                if (int.TryParse(dartThrowString, out randomPointCount)) break;
+                Console.WriteLine();
+                Console.WriteLine("Invalid Number!");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Console.WriteLine($"Using Monte Carlo Mean Method to integrate function {function.ToDescription()} from 0 to 1...");
+            var integrationByMean = new Integration();
+            var resultOfIntegrationByMean = integrationByMean.GetIntegrationByRandomNumberMean(FunctionType.Sine, randomPointCount);
+
+            Console.WriteLine($"Using Monte Carlo Dart Method to integrate function {function.ToDescription()}...");
+            var integrationByDart = new Integration();
+            var resultOfIntegrationByDart = integrationByDart.GetIntegrationByDartThrow(FunctionType.Sine, randomPointCount);
+
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Console.WriteLine($"Result of Integration By Mean: {resultOfIntegrationByMean}");
+            Console.WriteLine($"Result of Integration By Dart: {resultOfIntegrationByDart}");
 
             ReturnToMenuWait();
         }
