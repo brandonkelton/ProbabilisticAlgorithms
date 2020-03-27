@@ -9,3 +9,5 @@ D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.
 D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.AssemblyInfo.cs
 D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.dll
 D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.pdb
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.csproj.CoreCompileInputs.cache
+D:\CS4050\ProbabilisticAlgorithms\ProbabilisticAlgorithms\obj\Debug\netcoreapp3.0\ProbabilisticAlgorithms.genruntimeconfig.cache

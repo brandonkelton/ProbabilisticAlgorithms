@@ -1,9 +1,11 @@
 ﻿using ProbabilisticAlgorithms.ComputingPi;
+using ProbabilisticAlgorithms.EightQueens;
 using ProbabilisticAlgorithms.MonteCarloIntegration;
 using ProbabilisticAlgorithms.PrimeNumberTest;
 using ProbabilisticAlgorithms.SearchArray;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ProbabilisticAlgorithms
@@ -30,6 +32,7 @@ namespace ProbabilisticAlgorithms
             Console.WriteLine("2) Prime Number Test");
             Console.WriteLine("3) Random Search of Array");
             Console.WriteLine("4) Monte Carlo Integration");
+            Console.WriteLine("5) Eight Queens");
             Console.WriteLine();
             Console.WriteLine();
             Console.Write("Press a number, or <Escape> to exit: ");
@@ -61,6 +64,11 @@ namespace ProbabilisticAlgorithms
                 case ConsoleKey.NumPad4:
                 case ConsoleKey.Oem4:
                     RunMonteCarloIntegration();
+                    break;
+                case ConsoleKey.D5:
+                case ConsoleKey.NumPad5:
+                case ConsoleKey.Oem5:
+                    RunEightQueens();
                     break;
                 default:
                     break;
@@ -237,7 +245,7 @@ namespace ProbabilisticAlgorithms
             var correctOptionSelection = false;
             while (!correctOptionSelection)
             {
-                Console.Write("Select function type - (S)ine, (C)osine, (T)angent? (default: Sine)? ");
+                Console.Write("Select function type - (S)ine, (C)osine, (T)angent (default: Sine)? ");
                 var selection = Console.ReadKey();
                 switch (selection.Key)
                 {
@@ -265,7 +273,7 @@ namespace ProbabilisticAlgorithms
             var randomPointCount = 100_000_000;
             while (true)
             {
-                Console.Write("How many random points should be applied? (default: 100,000,000)? ");
+                Console.Write("How many random points should be applied (default: 100,000,000)? ");
                 var dartThrowString = Console.ReadLine();
                 if (dartThrowString == "") break;
                 if (int.TryParse(dartThrowString, out randomPointCount)) break;
@@ -291,6 +299,121 @@ namespace ProbabilisticAlgorithms
             Console.WriteLine($"Result of Integration By Dart: {resultOfIntegrationByDart}");
 
             ReturnToMenuWait();
+        }
+
+        private static void RunEightQueens()
+        {
+            var eightQueens = new EightQueensSolver();
+            eightQueens.DrawBoard();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Console.WriteLine("Add between 1 and 7 queens to the board. At least 1 queen is required.");
+            Console.WriteLine("Use the ARROW KEYS to move through the board.");
+            Console.WriteLine("Use SPACEBAR or ENTER to add or remove a queen from the board.");
+            Console.WriteLine("Press ESCAPE when done.");
+
+            InteractWithUserForInitialQueenPlacement(eightQueens);
+
+            if (eightQueens.QueenCount == 0)
+            {
+                Console.SetCursorPosition(0, 12 * eightQueens.BoardRowOffset);
+                ReturnToMenuWait();
+                return;
+            }
+
+            var result = eightQueens.Solve();
+
+            Console.SetCursorPosition(0, 12 * eightQueens.BoardRowOffset);
+            ReturnToMenuWait();
+        }
+
+        private static void InteractWithUserForInitialQueenPlacement(EightQueensSolver eightQueens)
+        {
+            var column = 0;
+            var row = 0;
+
+            var isAssigningQueens = true;
+            var isShowingMaxQueenWarning = false;
+            var isEscapePressedOnce = false;
+            var stdOut = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
+            var memStream = new MemoryStream();
+            var fakeWriter = new StreamWriter(memStream);
+            Console.SetOut(fakeWriter);
+
+            while (isAssigningQueens)
+            {
+                Console.SetCursorPosition((column + 1) * eightQueens.BoardColumnOffset, (row + 1) * eightQueens.BoardRowOffset);
+                var keyInfo = Console.ReadKey();
+
+                if (keyInfo.Key == ConsoleKey.Escape && isEscapePressedOnce)
+                {
+                    break;
+                }
+                else if (isEscapePressedOnce || isShowingMaxQueenWarning)
+                {
+                    Console.SetOut(stdOut);
+                    Console.SetCursorPosition(0, 0);
+                    Console.Write(string.Join("", Enumerable.Repeat(" ", 80)));
+                    Console.SetOut(fakeWriter);
+                    isEscapePressedOnce = false;
+                    isShowingMaxQueenWarning = false;
+                    Console.SetCursorPosition((column + 1) * eightQueens.BoardColumnOffset, (row + 1) * eightQueens.BoardRowOffset);
+                }
+
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.LeftArrow:
+                        column = column > 0 ? --column : column;
+                        break;
+                    case ConsoleKey.UpArrow:
+                        row = row > 0 ? --row : row;
+                        break;
+                    case ConsoleKey.RightArrow:
+                        column = column < 7 ? ++column : column;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        row = row < 7 ? ++row : row;
+                        break;
+                    case ConsoleKey.Enter:
+                    case ConsoleKey.Spacebar:
+                        if (eightQueens.QueenCount == 7 && eightQueens.GetQueenState(column, row) == 0)
+                        {
+                            Console.SetOut(stdOut);
+                            Console.SetCursorPosition(0, 0);
+                            Console.Write("The number of queens may not exceed 7.");
+                            Console.SetOut(fakeWriter);
+                            isShowingMaxQueenWarning = true;
+                        } 
+                        else
+                        {
+                            eightQueens.SetQueen(column, row);
+                            Console.SetOut(stdOut);
+                            Console.Write(eightQueens.GetQueenState(column, row));
+                            Console.SetOut(fakeWriter);
+                        }
+                        break;
+                    case ConsoleKey.Escape:
+                        if (eightQueens.QueenCount == 0)
+                        {
+                            Console.SetOut(stdOut);
+                            Console.SetCursorPosition(0, 0);
+                            Console.Write("At least 1 queen is required. Press ESCAPE again to cancel program.");
+                            Console.SetOut(fakeWriter);
+                            isEscapePressedOnce = true;
+                        } else
+                        {
+                            isAssigningQueens = false;
+                        }
+                        break;
+                }
+            }
+
+            fakeWriter.Dispose();
+            memStream.Dispose();
+            Console.SetOut(stdOut);
         }
 
         private static void ReturnToMenuWait()
