@@ -324,7 +324,21 @@ namespace ProbabilisticAlgorithms
                 return;
             }
 
-            var result = eightQueens.Solve();
+            var isSolved = eightQueens.Solve();
+
+            if (isSolved)
+            {
+                eightQueens.DrawBoard();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("A solution was found! See above.");
+            } else
+            {
+                eightQueens.DrawBoard();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("There is no solution.");
+            }
 
             Console.SetCursorPosition(0, 12 * eightQueens.BoardRowOffset);
             ReturnToMenuWait();
