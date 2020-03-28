@@ -19,6 +19,8 @@ namespace ProbabilisticAlgorithms.EightQueens
                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
                                           { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
+        public TimeSpan LastRunTime { get; private set; }
+
         public void DrawBoard()
         {
             Console.Clear();
@@ -27,35 +29,50 @@ namespace ProbabilisticAlgorithms.EightQueens
                 for (int col=0; col < 8; col++)
                 {
                     Console.SetCursorPosition((col + 1) * BoardColumnOffset, (row + 1) * BoardRowOffset);
+                    if (Board[row, col] == 0) Console.ForegroundColor = ConsoleColor.White;
+                    else Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write(Board[row, col]);
                 }
             }
+
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public PlacementResult SetQueenState(int column, int row)
+        public PlacementResult SetQueenState(int row, int col)
         {
             var placementResult = new PlacementResult();
 
-            if (GetQueenState(column, row) == 0)
+            if (GetQueenState(row, col) == 0)
             {
-                if (!IsSafeInColumn(column)) placementResult.ResultTypes.Add(PlacementResultType.ColumnViolation);
+                if (!IsSafeInColumn(col)) placementResult.ResultTypes.Add(PlacementResultType.ColumnViolation);
                 if (!IsSafeInRow(row)) placementResult.ResultTypes.Add(PlacementResultType.RowViolation);
-                if (!IsSafeDiagonally(row, column)) placementResult.ResultTypes.Add(PlacementResultType.DiagonalViolation);
+                if (!IsSafeDiagonally(row, col)) placementResult.ResultTypes.Add(PlacementResultType.DiagonalViolation);
             }
 
-            if (placementResult.IsValid) Board[row, column] = Board[row, column] == 0 ? 1 : 0;
+            if (placementResult.IsValid) Board[row, col] = Board[row, col] == 0 ? 1 : 0;
 
             return placementResult;
         }
 
-        public int GetQueenState(int column, int row)
+        public int GetQueenState(int row, int col)
         {
-            return Board[row, column];
+            return Board[row, col];
         }
 
         public int QueenCount => (from int val in Board where val == 1 select val).Count();
 
-        public bool Solve(int queen = 1, int col = 0)
+        public bool Solve()
+        {
+            var startTime = DateTime.Now;
+            var isSolved = FindSolution();
+            var stopTime = DateTime.Now;
+
+            LastRunTime = stopTime - startTime;
+
+            return isSolved;
+        }
+
+        private bool FindSolution(int queen = 1, int col = 0)
         {
             if (QueenCount == 8) return true;
             if (col > 7) return false;
@@ -69,13 +86,13 @@ namespace ProbabilisticAlgorithms.EightQueens
                         if (IsSafeDiagonally(row, col))
                         {
                             Board[row, col] = 1;
-                            if (Solve(queen + 1, col + 1)) return true;
+                            if (FindSolution(queen + 1, col + 1)) return true;
                             Board[row, col] = 0;
                         }
                     } 
                     else
                     {
-                        if (Solve(queen, col + 1)) return true;
+                        if (FindSolution(queen, col + 1)) return true;
                         Board[row, col] = 0;
                     }
                 }

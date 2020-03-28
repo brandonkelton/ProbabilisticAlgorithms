@@ -310,10 +310,10 @@ namespace ProbabilisticAlgorithms
             Console.WriteLine();
             Console.WriteLine();
 
-            Console.WriteLine("Add between 1 and 7 queens to the board. At least 1 queen is required.");
+            Console.WriteLine("Add between 1 and 7 queens to the board. (At least 1 queen is required.)");
             Console.WriteLine("Use the ARROW KEYS to move through the board.");
-            Console.WriteLine("Use SPACEBAR or ENTER to add or remove a queen from the board.");
-            Console.WriteLine("Press ESCAPE when done.");
+            Console.WriteLine("Use SPACEBAR to add or remove a queen from the board.");
+            Console.WriteLine("Press ENTER when done.");
 
             InteractWithUserForInitialQueenPlacement(eightQueens);
 
@@ -330,7 +330,7 @@ namespace ProbabilisticAlgorithms
             Console.WriteLine();
             Console.WriteLine();
 
-            if (isSolved) Console.WriteLine("A solution was found! See above.");
+            if (isSolved) Console.WriteLine($"A solution was found in {eightQueens.LastRunTime.TotalMilliseconds}ms. See above.");
             else Console.WriteLine("There is no solution.");
 
             Console.SetCursorPosition(0, 9 * eightQueens.BoardRowOffset);
@@ -343,9 +343,7 @@ namespace ProbabilisticAlgorithms
             var row = 0;
 
             var isAssigningQueens = true;
-            var isShowingMaxQueenWarning = false;
-            var isShowingPlacementViolation = false;
-            var isEscapePressedOnce = false;
+            var isShowingWarning = false;
             var stdOut = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
             var memStream = new MemoryStream();
             var fakeWriter = new StreamWriter(memStream);
@@ -356,19 +354,18 @@ namespace ProbabilisticAlgorithms
                 Console.SetCursorPosition((column + 1) * eightQueens.BoardColumnOffset, (row + 1) * eightQueens.BoardRowOffset);
                 var keyInfo = Console.ReadKey();
 
-                if (keyInfo.Key == ConsoleKey.Escape && isEscapePressedOnce)
+                if (keyInfo.Key == ConsoleKey.Escape)
                 {
                     break;
                 }
-                else if (isEscapePressedOnce || isShowingMaxQueenWarning || isShowingPlacementViolation)
+                
+                if (isShowingWarning)
                 {
                     Console.SetOut(stdOut);
                     Console.SetCursorPosition(0, 0);
                     Console.Write(string.Join("", Enumerable.Repeat(" ", 80)));
                     Console.SetOut(fakeWriter);
-                    isEscapePressedOnce = false;
-                    isShowingMaxQueenWarning = false;
-                    isShowingPlacementViolation = false;
+                    isShowingWarning = false;
                     Console.SetCursorPosition((column + 1) * eightQueens.BoardColumnOffset, (row + 1) * eightQueens.BoardRowOffset);
                 }
 
@@ -386,43 +383,45 @@ namespace ProbabilisticAlgorithms
                     case ConsoleKey.DownArrow:
                         row = row < 7 ? ++row : row;
                         break;
-                    case ConsoleKey.Enter:
                     case ConsoleKey.Spacebar:
-                        if (eightQueens.QueenCount == 7 && eightQueens.GetQueenState(column, row) == 0)
+                        if (eightQueens.QueenCount == 7 && eightQueens.GetQueenState(row, column) == 0)
                         {
                             Console.SetOut(stdOut);
                             Console.SetCursorPosition(0, 0);
                             Console.Write("The number of queens may not exceed 7.");
                             Console.SetOut(fakeWriter);
-                            isShowingMaxQueenWarning = true;
+                            isShowingWarning = true;
                         } 
                         else
                         {
-                            var placementResult = eightQueens.SetQueenState(column, row);
+                            var placementResult = eightQueens.SetQueenState(row, column);
                             if (!placementResult.IsValid)
                             {
                                 Console.SetOut(stdOut);
                                 Console.SetCursorPosition(0, 0);
                                 Console.Write(placementResult.Message);
                                 Console.SetOut(fakeWriter);
-                                isShowingPlacementViolation = true;
+                                isShowingWarning = true;
                             }
                             else
                             {
+                                var currentQueenState = eightQueens.GetQueenState(row, column);
+                                if (currentQueenState == 1) Console.ForegroundColor = ConsoleColor.Yellow;
                                 Console.SetOut(stdOut);
-                                Console.Write(eightQueens.GetQueenState(column, row));
+                                Console.Write(currentQueenState);
                                 Console.SetOut(fakeWriter);
+                                Console.ForegroundColor = ConsoleColor.White;
                             }
                         }
                         break;
-                    case ConsoleKey.Escape:
+                    case ConsoleKey.Enter:
                         if (eightQueens.QueenCount == 0)
                         {
                             Console.SetOut(stdOut);
                             Console.SetCursorPosition(0, 0);
-                            Console.Write("At least 1 queen is required. Press ESCAPE again to cancel program.");
+                            Console.Write("At least 1 queen is required.");
                             Console.SetOut(fakeWriter);
-                            isEscapePressedOnce = true;
+                            isShowingWarning = true;
                         } else
                         {
                             isAssigningQueens = false;
