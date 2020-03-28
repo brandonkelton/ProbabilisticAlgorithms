@@ -34,7 +34,6 @@ namespace ProbabilisticAlgorithms.EightQueens
                     Console.Write(Board[row, col]);
                 }
             }
-
             Console.ForegroundColor = ConsoleColor.White;
         }
 
