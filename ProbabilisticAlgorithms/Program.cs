@@ -326,21 +326,14 @@ namespace ProbabilisticAlgorithms
 
             var isSolved = eightQueens.Solve();
 
-            if (isSolved)
-            {
-                eightQueens.DrawBoard();
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine("A solution was found! See above.");
-            } else
-            {
-                eightQueens.DrawBoard();
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine("There is no solution.");
-            }
+            eightQueens.DrawBoard();
+            Console.WriteLine();
+            Console.WriteLine();
 
-            Console.SetCursorPosition(0, 12 * eightQueens.BoardRowOffset);
+            if (isSolved) Console.WriteLine("A solution was found! See above.");
+            else Console.WriteLine("There is no solution.");
+
+            Console.SetCursorPosition(0, 9 * eightQueens.BoardRowOffset);
             ReturnToMenuWait();
         }
 
@@ -351,6 +344,7 @@ namespace ProbabilisticAlgorithms
 
             var isAssigningQueens = true;
             var isShowingMaxQueenWarning = false;
+            var isShowingPlacementViolation = false;
             var isEscapePressedOnce = false;
             var stdOut = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
             var memStream = new MemoryStream();
@@ -366,7 +360,7 @@ namespace ProbabilisticAlgorithms
                 {
                     break;
                 }
-                else if (isEscapePressedOnce || isShowingMaxQueenWarning)
+                else if (isEscapePressedOnce || isShowingMaxQueenWarning || isShowingPlacementViolation)
                 {
                     Console.SetOut(stdOut);
                     Console.SetCursorPosition(0, 0);
@@ -374,6 +368,7 @@ namespace ProbabilisticAlgorithms
                     Console.SetOut(fakeWriter);
                     isEscapePressedOnce = false;
                     isShowingMaxQueenWarning = false;
+                    isShowingPlacementViolation = false;
                     Console.SetCursorPosition((column + 1) * eightQueens.BoardColumnOffset, (row + 1) * eightQueens.BoardRowOffset);
                 }
 
@@ -403,10 +398,21 @@ namespace ProbabilisticAlgorithms
                         } 
                         else
                         {
-                            eightQueens.SetQueen(column, row);
-                            Console.SetOut(stdOut);
-                            Console.Write(eightQueens.GetQueenState(column, row));
-                            Console.SetOut(fakeWriter);
+                            var placementResult = eightQueens.SetQueenState(column, row);
+                            if (!placementResult.IsValid)
+                            {
+                                Console.SetOut(stdOut);
+                                Console.SetCursorPosition(0, 0);
+                                Console.Write(placementResult.Message);
+                                Console.SetOut(fakeWriter);
+                                isShowingPlacementViolation = true;
+                            }
+                            else
+                            {
+                                Console.SetOut(stdOut);
+                                Console.Write(eightQueens.GetQueenState(column, row));
+                                Console.SetOut(fakeWriter);
+                            }
                         }
                         break;
                     case ConsoleKey.Escape:

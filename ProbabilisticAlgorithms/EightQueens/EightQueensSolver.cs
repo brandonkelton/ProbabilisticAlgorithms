@@ -19,27 +19,6 @@ namespace ProbabilisticAlgorithms.EightQueens
                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
                                           { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-        public void SetupBoard(int queenCount)
-        {
-            int row = 0;
-            int lastRowStart = 0;
-            int col = 0;
-
-            for (int i=0; i < queenCount; i++)
-            {
-                if (row > 7)
-                {
-                    lastRowStart++;
-                    row = lastRowStart;
-                }
-
-                Board[row, col] = 1;
-
-                row += 2;
-                col++;
-            }
-        }
-
         public void DrawBoard()
         {
             Console.Clear();
@@ -53,9 +32,20 @@ namespace ProbabilisticAlgorithms.EightQueens
             }
         }
 
-        public void SetQueen(int column, int row)
+        public PlacementResult SetQueenState(int column, int row)
         {
-            Board[row, column] = Board[row, column] == 0 ? 1 : 0;
+            var placementResult = new PlacementResult();
+
+            if (GetQueenState(column, row) == 0)
+            {
+                if (!IsSafeInColumn(column)) placementResult.ResultTypes.Add(PlacementResultType.ColumnViolation);
+                if (!IsSafeInRow(row)) placementResult.ResultTypes.Add(PlacementResultType.RowViolation);
+                if (!IsSafeDiagonally(row, column)) placementResult.ResultTypes.Add(PlacementResultType.DiagonalViolation);
+            }
+
+            if (placementResult.IsValid) Board[row, column] = Board[row, column] == 0 ? 1 : 0;
+
+            return placementResult;
         }
 
         public int GetQueenState(int column, int row)
