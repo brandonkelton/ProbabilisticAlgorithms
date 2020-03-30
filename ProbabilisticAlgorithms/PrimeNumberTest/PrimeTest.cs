@@ -7,47 +7,27 @@ namespace ProbabilisticAlgorithms.PrimeNumberTest
 {
     public class PrimeTest
     {
-        public int PotentiallyPrimeNumber { get; private set; }
+        public long PotentiallyPrimeNumber { get; private set; }
 
-        public PrimeTest(int potentialPrimeNumber)
+        public PrimeTest(long potentialPrimeNumber)
         {
             if (potentialPrimeNumber < 1) throw new Exception("Number must be greater than 0");
             PotentiallyPrimeNumber = potentialPrimeNumber;
         }
 
-        public bool IsPrime(int[] testNumbers)
+        public bool IsPrime()
         {
             if (PotentiallyPrimeNumber == 1) return false;
             if (PotentiallyPrimeNumber == 2) return true;
-
-            if (testNumbers.Length == 0)
-            {
-                return GetIsPrimeAutomatically();
-            }
-
-            return GetIsPrimeWithTestNumbers(testNumbers);
+            return GetIsPrime();
         }
 
-        private bool GetIsPrimeAutomatically()
+        private bool GetIsPrime()
         {
-            for (int i = 2; i <= Math.Sqrt(PotentiallyPrimeNumber); i++)
+            for (long i = 2; i <= Math.Sqrt(PotentiallyPrimeNumber); i++)
             {
                 if (PotentiallyPrimeNumber % i == 0) return false;
             }
-
-            return true;
-        }
-
-        private bool GetIsPrimeWithTestNumbers(int[] testNumbers)
-        {
-            foreach (var testNumber in testNumbers)
-            {
-                if (PotentiallyPrimeNumber % testNumber == 0)
-                {
-                    return false;
-                }
-            }
-
             return true;
         }
     }

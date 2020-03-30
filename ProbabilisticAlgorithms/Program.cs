@@ -112,38 +112,75 @@ namespace ProbabilisticAlgorithms
         static void RunPrimeTest()
         {
             Console.WriteLine();
-            Console.WriteLine("Input one or more numbers for which you would like to run a prime number test...");
+            Console.WriteLine("Prime Number Test");
             Console.WriteLine();
-            var potentiallyPrimeNumbers = GetNumbers();
-            if (potentiallyPrimeNumbers.Length == 0)
+
+            bool isAutomatic;
+            while (true)
             {
-                Console.WriteLine("You didn't input any numbers, so I'm quitting.");
-                return;
+                Console.WriteLine();
+                Console.Write("(A)utomatically generate number list, or (m)anually input numbers (A/m)? ");
+                var response = Console.ReadKey();
+                if (response.Key == ConsoleKey.A)
+                {
+                    isAutomatic = true;
+                    break;
+                }
+                else if (response.Key == ConsoleKey.M)
+                {
+                    isAutomatic = false;
+                    break;
+                }
+            }
+
+            Number[] Numbers;
+            var primeTestResults = new List<PrimeTestResult>();
+
+            if (isAutomatic)
+            {
+                int numberCount;
+                while (true)
+                {
+                    Console.WriteLine();
+                    Console.Write("How many non-prime numbers would you like to test (Test contains 30 Prime Numbers)? ");
+                    var response = Console.ReadLine();
+                    if (int.TryParse(response, out numberCount)) break;
+                    Console.WriteLine("Invalid number!");
+                }
+                var numberGen = new NumberGenerator(numberCount);
+                numberGen.BuildList();
+                Numbers = numberGen.Numbers.ToArray();
+            } 
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Input one or more numbers for which you would like to run a prime number test:");
+                Console.WriteLine();
+
+                Numbers = GetNumbers();
+                if (Numbers.Length == 0)
+                {
+                    Console.WriteLine("You didn't input any numbers, so I'm quitting.");
+                    return;
+                }
             }
 
             Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Input one or more numbers you would like to use to test against your potentially prime number(s).");
-            Console.WriteLine("To run an automatic test, do NOT input any test numbers.");
-            var testNumbers = GetNumbers();
+            Console.WriteLine();            
 
-            Console.WriteLine();
-            Console.WriteLine();
-
-            var primeTestResults = new List<PrimeTestResult>();
-
-            foreach (var potentiallyPrimeNumber in potentiallyPrimeNumbers)
+            foreach (var number in Numbers)
             {
-                Console.Write($"Checking {potentiallyPrimeNumber}... ");
+                Console.Write($"Checking {number.Value}... ");
 
                 PrimeTest primeTest;
                 try
                 {
-                    primeTest = new PrimeTest(potentiallyPrimeNumber);
+                    primeTest = new PrimeTest(number.Value);
                     var primeTestResult = new PrimeTestResult
                     {
-                        PotentiallyPrimeNumber = potentiallyPrimeNumber,
-                        IsPrime = primeTest.IsPrime(testNumbers)
+                        PotentiallyPrimeNumber = number.Value,
+                        IsPrime = primeTest.IsPrime(),
+                        MatchesSpecification = number.IsPrime.HasValue ? (primeTest.IsPrime() == number.IsPrime.Value) as bool? : null
                     };
                     primeTestResults.Add(primeTestResult);
                     Console.WriteLine("Done -> Recording results");
@@ -159,9 +196,15 @@ namespace ProbabilisticAlgorithms
 
             foreach (var result in primeTestResults)
             {
+                var matchesSpecification = result.MatchesSpecification.HasValue 
+                    ? result.MatchesSpecification.Value 
+                        ? "  CORRECT!" 
+                        : "  INCORRECT!" 
+                    : "";
+
                 var resultText = result.IsPrime
-                        ? $"The number {result.PotentiallyPrimeNumber} is prime."
-                        : $"The number {result.PotentiallyPrimeNumber} is NOT prime.";
+                        ? $"The number {result.PotentiallyPrimeNumber} is prime." + matchesSpecification
+                        : $"The number {result.PotentiallyPrimeNumber} is NOT prime." + matchesSpecification;
 
                 Console.WriteLine(resultText);
             }
@@ -169,21 +212,21 @@ namespace ProbabilisticAlgorithms
             ReturnToMenuWait();
         }
 
-        private static int[] GetNumbers()
+        private static Number[] GetNumbers()
         {
             Console.WriteLine();
-            Console.WriteLine("You will be prompted to input numbers until you press <Enter> with no input.");
+            Console.WriteLine("You will be prompted to input numbers until you press ENTER with no input.");
             Console.WriteLine();
 
-            var numbers = new List<int>();
+            var numbers = new List<long>();
             while (true)
             {
                 Console.Write("Input a number: ");
                 var input = Console.ReadLine();
                 if (input == "") break;
 
-                int number;
-                if (int.TryParse(input, out number))
+                long number;
+                if (long.TryParse(input, out number))
                 {
                     numbers.Add(number);
                 }
@@ -193,7 +236,7 @@ namespace ProbabilisticAlgorithms
                 }
             }
 
-            return numbers.ToArray();
+            return numbers.Select(n => new Number(n)).ToArray();
         }
 
         private static void RunSearchArray()

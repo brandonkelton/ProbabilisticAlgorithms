@@ -6,7 +6,8 @@ namespace ProbabilisticAlgorithms.PrimeNumberTest
 {
     public class PrimeTestResult
     {
-        public int PotentiallyPrimeNumber { get; set; }
+        public long PotentiallyPrimeNumber { get; set; }
         public bool IsPrime { get; set; }
+        public bool? MatchesSpecification { get; set; }
     }
 }
